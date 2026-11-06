@@ -45,13 +45,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.zIndex
 
 @Composable
 internal fun RunWorkoutScreen(
     workout: Workout,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    onEdit: () -> Unit
 ) {
     var elapsedMillis by rememberSaveable {
         mutableLongStateOf(0L)
@@ -141,8 +147,9 @@ internal fun RunWorkoutScreen(
         }
     )
 
-    val exitDescription = stringResource(R.string.exit_timer)
+    val exitDescription = stringResource(R.string.tab_timers)
     val resetDescription = stringResource(R.string.reset_workout)
+    val editDescription = stringResource(R.string.timer_edit_current)
 
     WorkoutSoundEffects(
         workoutId = workout.id,
@@ -192,6 +199,18 @@ internal fun RunWorkoutScreen(
         }
     }
 
+    var exitToEditor by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val leaveTimer: () -> Unit = {
+        if (exitToEditor) {
+            onEdit()
+        } else {
+            onExit()
+        }
+    }
+
     val cancelReset: () -> Unit = {
         showResetDialog = false
         isRunning = wasRunningBeforeReset
@@ -199,12 +218,13 @@ internal fun RunWorkoutScreen(
 
     val cancelExit: () -> Unit = {
         showExitDialog = false
+        exitToEditor = false
         isRunning = wasRunningBeforeExit
     }
 
     val requestExit: () -> Unit = {
         if (!hasStarted || isFinished) {
-            onExit()
+            leaveTimer()
         } else {
             wasRunningBeforeExit = isRunning
             isRunning = false
@@ -222,7 +242,7 @@ internal fun RunWorkoutScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = phaseColor
+        color = Color(0xFF101318)
     ) {
         Column(
             modifier = Modifier
@@ -232,13 +252,13 @@ internal fun RunWorkoutScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 16.dp
-                    ),
+                    .height(72.dp)
+                    .background(Color(0xFF101318))
+                    .padding(horizontal = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val ink = Color(0xFFF3F5F7)
                 FilledIconButton(
                     onClick = requestExit,
                     modifier = Modifier
@@ -253,7 +273,7 @@ internal fun RunWorkoutScreen(
                     )
                 ) {
                     Text(
-                        text = "×",
+                        text = "▦",
                         fontSize = 28.sp
                     )
                 }
@@ -281,6 +301,84 @@ internal fun RunWorkoutScreen(
                 }
 
                 FilledIconButton(
+                    onClick = {
+                        exitToEditor = true
+                        requestExit()
+                    },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .semantics {
+                            contentDescription = editDescription
+                        },
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = Color(0xFFF3F5F7).copy(alpha = 0.10f),
+                        contentColor = Color(0xFFF3F5F7)
+                    )
+                ) {
+                    Text(
+                        text = "⚙",
+                        fontSize = 24.sp
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .zIndex(1f)
+            ) {
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(phaseColor)
+                        .padding(horizontal = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val fontScale = LocalDensity.current.fontScale
+                    val digitCount = countdownText.length.coerceAtLeast(5)
+
+                    val widthLimit =
+                        maxWidth.value / (digitCount * 0.62f)
+
+                    val heightLimit = maxHeight.value * 0.42f
+
+                    val countdownSize = (
+                            minOf(widthLimit, heightLimit, 160f) / fontScale
+                            ).coerceAtLeast(1f).sp
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = timerPhaseLabel(position.phase).uppercase(),
+                            color = ink,
+                            style = MaterialTheme.typography.headlineLarge,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Black,
+                        )
+
+                        Text(
+                            text = countdownText,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = ink,
+                            style = MaterialTheme.typography.displayLarge.copy(
+                                fontSize = countdownSize,
+                                lineHeight = countdownSize,
+                                letterSpacing = (-2).sp
+                            ),
+                            maxLines = 1,
+                            softWrap = false,
+                            textAlign = TextAlign.Center
+                        )
+
+                    }
+                }
+
+                FilledIconButton(
                     enabled = hasStarted,
                     onClick = {
                         wasRunningBeforeReset =
@@ -290,18 +388,24 @@ internal fun RunWorkoutScreen(
                         showResetDialog = true
                     },
                     modifier = Modifier
-                        .size(48.dp)
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-72).dp, y = (-12).dp)
+                        .size(52.dp)
+                        .border(
+                            width = 2.dp,
+                            color = phaseColor,
+                            shape = CircleShape
+                        )
                         .semantics {
                             contentDescription = resetDescription
                         },
                     shape = CircleShape,
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = ink.copy(alpha = 0.10f),
-                        contentColor = ink,
-                        disabledContainerColor =
-                            ink.copy(alpha = 0.04f),
+                        containerColor = Color(0xFF101318),
+                        contentColor = Color(0xFFF3F5F7),
+                        disabledContainerColor = Color(0xFF101318),
                         disabledContentColor =
-                            ink.copy(alpha = 0.30f)
+                            Color(0xFFF3F5F7).copy(alpha = 0.35f)
                     )
                 ) {
                     Text(
@@ -311,93 +415,57 @@ internal fun RunWorkoutScreen(
                 }
             }
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                val fontScale = LocalDensity.current.fontScale
-                val digitCount = countdownText.length.coerceAtLeast(5)
-
-                val widthLimit =
-                    maxWidth.value / (digitCount * 0.62f)
-
-                val heightLimit = maxHeight.value * 0.42f
-
-                val countdownSize = (
-                        minOf(widthLimit, heightLimit, 160f) / fontScale
-                        ).coerceAtLeast(1f).sp
-
+            if (!isFinished && nextPosition != null) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(112.dp)
+                        .background(
+                            timerPhaseColor(nextPosition.phase)
+                        )
+                        .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = timerPhaseLabel(position.phase),
-                        color = ink,
-                        style = MaterialTheme.typography.headlineLarge,
-                        textAlign = TextAlign.Center
+                        text = timerPhaseLabel(nextPosition.phase).uppercase(),
+                        color = Color(0xFF101318),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     Text(
-                        text = countdownText,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = ink,
-                        style = MaterialTheme.typography.displayLarge.copy(
-                            fontSize = countdownSize,
-                            lineHeight = countdownSize,
-                            letterSpacing = (-2).sp
+                        text = stringResource(
+                            R.string.duration_format,
+                            nextPosition.secondsLeft / 60,
+                            nextPosition.secondsLeft % 60
                         ),
-                        maxLines = 1,
-                        softWrap = false,
-                        textAlign = TextAlign.Center
+                        color = Color(0xFF101318),
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontFeatureSettings = "tnum"
+                        ),
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
                     )
-
-                    if (!isFinished) {
-                        val nextText = if (nextPosition != null) {
-                            stringResource(
-                                R.string.timer_next,
-                                timerPhaseLabel(nextPosition.phase),
-                                stringResource(
-                                    R.string.duration_format,
-                                    nextPosition.secondsLeft / 60,
-                                    nextPosition.secondsLeft % 60
-                                )
-                            )
-                        } else {
-                            stringResource(
-                                R.string.timer_next_finished
-                            )
-                        }
-
-                        Text(
-                            text = nextText,
-                            modifier = Modifier.padding(
-                                horizontal = 12.dp
-                            ),
-                            color = ink.copy(alpha = 0.72f),
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                fontFeatureSettings = "tnum"
-                            ),
-                            textAlign = TextAlign.Center
-                        )
-                    }
                 }
             }
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Color(0xFF101318))
                     .padding(
                         horizontal = 16.dp,
-                        vertical = 24.dp
+                        vertical = 20.dp
                     ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val ink = Color(0xFFF3F5F7)
                 TimerCounter(
                     value = roundsLeft,
                     label = stringResource(R.string.rounds_left),
@@ -427,16 +495,8 @@ internal fun RunWorkoutScreen(
                         shape = CircleShape,
                         contentPadding = PaddingValues(0.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isFinished) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                ink
-                            },
-                            contentColor = if (isFinished) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                phaseColor
-                            }
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         Text(
@@ -458,18 +518,12 @@ internal fun RunWorkoutScreen(
                     )
                 }
 
-                if (workout.cycles > 1) {
-                    TimerCounter(
-                        value = cyclesLeft,
-                        label = stringResource(R.string.cycles_left),
-                        color = ink,
-                        modifier = Modifier.weight(1f)
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                TimerCounter(
+                    value = cyclesLeft,
+                    label = stringResource(R.string.cycles_left),
+                    color = ink,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }
@@ -484,7 +538,7 @@ internal fun RunWorkoutScreen(
             onConfirm = {
                 isRunning = false
                 showExitDialog = false
-                onExit()
+                leaveTimer()
             }
         )
     }

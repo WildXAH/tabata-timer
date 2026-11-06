@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.UUID
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 internal fun TimerApp() {
@@ -44,6 +45,10 @@ internal fun TimerApp() {
 
     var runningWorkoutJson by rememberSaveable {
         mutableStateOf<String?>(null)
+    }
+
+    var initialTimerOpened by rememberSaveable {
+        mutableStateOf(false)
     }
 
     var showSettings by rememberSaveable {
@@ -174,7 +179,8 @@ internal fun TimerApp() {
 
     fun persistWorkouts(
         updatedWorkouts: List<Workout>,
-        errorMessage: String
+        errorMessage: String,
+        returnWorkoutId: String? = null
     ) {
         if (isSaving) {
             return
@@ -189,13 +195,43 @@ internal fun TimerApp() {
                     workouts = updatedWorkouts
                 )
 
+                val workoutToOpen = updatedWorkouts.firstOrNull {
+                    it.id == returnWorkoutId
+                }
+
                 closeEditor()
+
+                if (workoutToOpen != null) {
+                    runningWorkoutJson = encodeWorkouts(
+                        listOf(workoutToOpen)
+                    )
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (_: Exception) {
                 showError(errorMessage)
             } finally {
                 isSaving = false
+            }
+        }
+    }
+
+    LaunchedEffect(currentWorkouts, initialTimerOpened) {
+        if (!initialTimerOpened) {
+            initialTimerOpened = true
+
+            val canOpenInitialTimer =
+                runningWorkoutJson == null &&
+                        !isCreating &&
+                        editingId == null &&
+                        !showSettings
+
+            if (canOpenInitialTimer) {
+                currentWorkouts.firstOrNull()?.let { workout ->
+                    runningWorkoutJson = encodeWorkouts(
+                        listOf(workout)
+                    )
+                }
             }
         }
     }
@@ -213,6 +249,12 @@ internal fun TimerApp() {
             vibrationEnabled = currentSettings.vibrationEnabled,
             onExit = {
                 runningWorkoutJson = null
+                showSettings = false
+            },
+            onEdit = {
+                editingId = activeWorkout.id
+                isCreating = false
+                runningWorkoutJson = null
             }
         )
 
@@ -226,7 +268,17 @@ internal fun TimerApp() {
             },
             onCancel = {
                 if (!isSaving) {
+                    val workoutToOpen = currentWorkouts.firstOrNull {
+                        it.id == editingId
+                    }
+
                     closeEditor()
+
+                    if (workoutToOpen != null) {
+                        runningWorkoutJson = encodeWorkouts(
+                            listOf(workoutToOpen)
+                        )
+                    }
                 }
             },
             onStart = { workout ->
@@ -255,7 +307,8 @@ internal fun TimerApp() {
 
                 persistWorkouts(
                     updatedWorkouts = updatedWorkouts,
-                    errorMessage = saveFailedMessage
+                    errorMessage = saveFailedMessage,
+                    returnWorkoutId = idToEdit ?: workout.id
                 )
             },
             onDelete = {

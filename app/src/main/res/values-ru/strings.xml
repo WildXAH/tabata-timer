@@ -111,4 +111,6 @@
     <string name="discard_changes_message">Изменения тренировки не сохранены.</string>
     <string name="keep_editing">Продолжить редактирование</string>
     <string name="discard_changes">Выйти</string>
+
+    <string name="timer_edit_current">Редактировать текущую тренировку</string>
 </resources>

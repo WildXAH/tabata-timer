@@ -109,4 +109,6 @@
     <string name="keep_editing">Keep editing</string>
     <string name="discard_changes">Discard</string>
 
+    <string name="timer_edit_current">Edit current workout</string>
+
 </resources>
