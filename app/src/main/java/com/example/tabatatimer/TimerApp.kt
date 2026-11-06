@@ -3,6 +3,7 @@ package com.example.tabatatimer
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -23,35 +24,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.UUID
-import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 internal fun TimerApp() {
     val context = LocalContext.current.applicationContext
     val scope = rememberCoroutineScope()
 
-    var isCreating by rememberSaveable {
-        mutableStateOf(false)
+    var selectedWorkoutJson by rememberSaveable {
+        mutableStateOf<String?>(null)
     }
 
     var editingId by rememberSaveable {
         mutableStateOf<String?>(null)
     }
 
-    var runningWorkoutJson by rememberSaveable {
-        mutableStateOf<String?>(null)
-    }
-
-    var initialTimerOpened by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    var showSettings by rememberSaveable {
+    var editorOpenedFromTimer by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -63,29 +58,23 @@ internal fun TimerApp() {
         mutableStateOf(false)
     }
 
-    val defaultWorkoutName = stringResource(
-        R.string.classic_tabata
-    )
+    val defaultWorkoutName =
+        stringResource(R.string.classic_tabata)
 
-    val saveFailedMessage = stringResource(
-        R.string.save_failed
-    )
+    val saveFailedMessage =
+        stringResource(R.string.save_failed)
 
-    val deleteFailedMessage = stringResource(
-        R.string.delete_workout_failed
-    )
+    val deleteFailedMessage =
+        stringResource(R.string.delete_workout_failed)
 
-    val duplicateFailedMessage = stringResource(
-        R.string.duplicate_workout_failed
-    )
+    val duplicateFailedMessage =
+        stringResource(R.string.duplicate_workout_failed)
 
-    val settingsSaveFailedMessage = stringResource(
-        R.string.settings_save_failed
-    )
+    val settingsSaveFailedMessage =
+        stringResource(R.string.settings_save_failed)
 
-    val workoutCopyNameFormat = stringResource(
-        R.string.workout_copy_name
-    )
+    val workoutCopyNameFormat =
+        stringResource(R.string.workout_copy_name)
 
     val workoutsFlow = remember(context, defaultWorkoutName) {
         context.workoutDataStore.data
@@ -129,13 +118,8 @@ internal fun TimerApp() {
             }
     }
 
-    val workouts by workoutsFlow.collectAsState(
-        initial = null
-    )
-
-    val appSettings by settingsFlow.collectAsState(
-        initial = null
-    )
+    val workouts by workoutsFlow.collectAsState(initial = null)
+    val appSettings by settingsFlow.collectAsState(initial = null)
 
     if (loadFailed) {
         Text(
@@ -164,6 +148,17 @@ internal fun TimerApp() {
         return
     }
 
+    val navController = rememberNavController()
+
+    val selectedWorkout = remember(selectedWorkoutJson) {
+        selectedWorkoutJson?.let { json ->
+            decodeWorkouts(json).firstOrNull()
+        }
+    }
+
+    val activeWorkout =
+        selectedWorkout ?: currentWorkouts.firstOrNull()
+
     fun showError(message: String) {
         Toast.makeText(
             context,
@@ -172,15 +167,72 @@ internal fun TimerApp() {
         ).show()
     }
 
-    fun closeEditor() {
-        isCreating = false
+    fun openTimer(workout: Workout) {
+        selectedWorkoutJson = encodeWorkouts(listOf(workout))
         editingId = null
+        editorOpenedFromTimer = false
+
+        navController.navigate(AppRoutes.TIMER) {
+            popUpTo(navController.graph.id) {
+                inclusive = false
+            }
+            launchSingleTop = true
+        }
+    }
+
+    fun openLibraryAsRoot() {
+        editingId = null
+        editorOpenedFromTimer = false
+
+        navController.navigate(AppRoutes.LIBRARY) {
+            popUpTo(navController.graph.id) {
+                inclusive = false
+            }
+            launchSingleTop = true
+        }
+    }
+
+    fun openEditor(
+        workoutId: String?,
+        fromTimer: Boolean
+    ) {
+        editingId = workoutId
+        editorOpenedFromTimer = fromTimer
+
+        navController.navigate(AppRoutes.EDITOR) {
+            launchSingleTop = true
+        }
+    }
+
+    fun cancelEditor() {
+        if (isSaving) {
+            return
+        }
+
+        if (editorOpenedFromTimer) {
+            val savedWorkout = currentWorkouts.firstOrNull {
+                it.id == editingId
+            }
+
+            if (savedWorkout != null) {
+                openTimer(savedWorkout)
+            } else {
+                openLibraryAsRoot()
+            }
+        } else {
+            editingId = null
+            editorOpenedFromTimer = false
+
+            if (!navController.popBackStack()) {
+                openLibraryAsRoot()
+            }
+        }
     }
 
     fun persistWorkouts(
         updatedWorkouts: List<Workout>,
         errorMessage: String,
-        returnWorkoutId: String? = null
+        onSuccess: () -> Unit
     ) {
         if (isSaving) {
             return
@@ -195,17 +247,7 @@ internal fun TimerApp() {
                     workouts = updatedWorkouts
                 )
 
-                val workoutToOpen = updatedWorkouts.firstOrNull {
-                    it.id == returnWorkoutId
-                }
-
-                closeEditor()
-
-                if (workoutToOpen != null) {
-                    runningWorkoutJson = encodeWorkouts(
-                        listOf(workoutToOpen)
-                    )
-                }
+                onSuccess()
             } catch (error: CancellationException) {
                 throw error
             } catch (_: Exception) {
@@ -216,178 +258,256 @@ internal fun TimerApp() {
         }
     }
 
-    LaunchedEffect(currentWorkouts, initialTimerOpened) {
-        if (!initialTimerOpened) {
-            initialTimerOpened = true
-
-            val canOpenInitialTimer =
-                runningWorkoutJson == null &&
-                        !isCreating &&
-                        editingId == null &&
-                        !showSettings
-
-            if (canOpenInitialTimer) {
-                currentWorkouts.firstOrNull()?.let { workout ->
-                    runningWorkoutJson = encodeWorkouts(
-                        listOf(workout)
-                    )
-                }
-            }
-        }
-    }
-
-    val activeWorkout = remember(runningWorkoutJson) {
-        runningWorkoutJson?.let { json ->
-            decodeWorkouts(json).first()
-        }
-    }
-
-    if (activeWorkout != null) {
-        RunWorkoutScreen(
-            workout = activeWorkout,
-            soundEnabled = currentSettings.soundEnabled,
-            vibrationEnabled = currentSettings.vibrationEnabled,
-            onExit = {
-                runningWorkoutJson = null
-                showSettings = false
-            },
-            onEdit = {
-                editingId = activeWorkout.id
-                isCreating = false
-                runningWorkoutJson = null
-            }
-        )
-
-        return
-    }
-
-    if (isCreating || editingId != null) {
-        CreateWorkoutScreen(
-            initialWorkout = currentWorkouts.firstOrNull {
-                it.id == editingId
-            },
-            onCancel = {
-                if (!isSaving) {
-                    val workoutToOpen = currentWorkouts.firstOrNull {
-                        it.id == editingId
-                    }
-
-                    closeEditor()
-
-                    if (workoutToOpen != null) {
-                        runningWorkoutJson = encodeWorkouts(
-                            listOf(workoutToOpen)
+    NavHost(
+        navController = navController,
+        startDestination = AppRoutes.TIMER
+    ) {
+        composable(AppRoutes.TIMER) {
+            if (activeWorkout != null) {
+                RunWorkoutScreen(
+                    workout = activeWorkout,
+                    soundEnabled = currentSettings.soundEnabled,
+                    vibrationEnabled =
+                        currentSettings.vibrationEnabled,
+                    onExit = {
+                        openLibraryAsRoot()
+                    },
+                    onEdit = {
+                        openEditor(
+                            workoutId = activeWorkout.id,
+                            fromTimer = true
                         )
                     }
-                }
-            },
-            onStart = { workout ->
-                if (!isSaving) {
-                    runningWorkoutJson = encodeWorkouts(
-                        listOf(workout)
-                    )
-
-                    closeEditor()
-                }
-            },
-            onSave = { workout ->
-                val idToEdit = editingId
-
-                val updatedWorkouts = if (idToEdit == null) {
-                    currentWorkouts + workout
-                } else {
-                    currentWorkouts.map { existing ->
-                        if (existing.id == idToEdit) {
-                            workout.copy(id = idToEdit)
-                        } else {
-                            existing
-                        }
+                )
+            } else {
+                TimerLibraryScreen(
+                    workouts = currentWorkouts,
+                    onCreate = {
+                        openEditor(
+                            workoutId = null,
+                            fromTimer = false
+                        )
+                    },
+                    onEdit = { workoutId ->
+                        openEditor(
+                            workoutId = workoutId,
+                            fromTimer = false
+                        )
+                    },
+                    onStart = { workout ->
+                        openTimer(workout)
+                    },
+                    onSettings = {
+                        navController.navigate(AppRoutes.SETTINGS)
                     }
-                }
-
-                persistWorkouts(
-                    updatedWorkouts = updatedWorkouts,
-                    errorMessage = saveFailedMessage,
-                    returnWorkoutId = idToEdit ?: workout.id
-                )
-            },
-            onDelete = {
-                val idToDelete = editingId
-
-                if (idToDelete != null) {
-                    persistWorkouts(
-                        updatedWorkouts =
-                            currentWorkouts.filterNot {
-                                it.id == idToDelete
-                            },
-                        errorMessage = deleteFailedMessage
-                    )
-                }
-            },
-            onDuplicate = { workout ->
-                val duplicatedWorkout = workout.copy(
-                    id = UUID.randomUUID().toString(),
-                    name = workoutCopyNameFormat.format(
-                        workout.name
-                    )
-                )
-
-                persistWorkouts(
-                    updatedWorkouts =
-                        currentWorkouts + duplicatedWorkout,
-                    errorMessage = duplicateFailedMessage
                 )
             }
-        )
+        }
 
-        return
+        composable(AppRoutes.LIBRARY) {
+            BackHandler(enabled = activeWorkout != null) {
+                activeWorkout?.let { workout ->
+                    val savedWorkout = currentWorkouts.firstOrNull {
+                        it.id == workout.id
+                    } ?: currentWorkouts.firstOrNull()
+
+                    if (savedWorkout != null) {
+                        openTimer(savedWorkout)
+                    }
+                }
+            }
+
+            TimerLibraryScreen(
+                workouts = currentWorkouts,
+                onCreate = {
+                    openEditor(
+                        workoutId = null,
+                        fromTimer = false
+                    )
+                },
+                onEdit = { workoutId ->
+                    openEditor(
+                        workoutId = workoutId,
+                        fromTimer = false
+                    )
+                },
+                onStart = { workout ->
+                    openTimer(workout)
+                },
+                onSettings = {
+                    navController.navigate(AppRoutes.SETTINGS) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(AppRoutes.EDITOR) {
+            CreateWorkoutScreen(
+                initialWorkout = currentWorkouts.firstOrNull {
+                    it.id == editingId
+                },
+                onCancel = {
+                    cancelEditor()
+                },
+                onStart = { workout ->
+                    if (!isSaving) {
+                        openTimer(workout)
+                    }
+                },
+                onSave = { workout ->
+                    val idToEdit = editingId
+
+                    val savedWorkout = if (idToEdit != null) {
+                        workout.copy(id = idToEdit)
+                    } else {
+                        workout
+                    }
+
+                    val updatedWorkouts = if (idToEdit == null) {
+                        currentWorkouts + savedWorkout
+                    } else {
+                        currentWorkouts.map { existing ->
+                            if (existing.id == idToEdit) {
+                                savedWorkout
+                            } else {
+                                existing
+                            }
+                        }
+                    }
+
+                    persistWorkouts(
+                        updatedWorkouts = updatedWorkouts,
+                        errorMessage = saveFailedMessage,
+                        onSuccess = {
+                            openTimer(savedWorkout)
+                        }
+                    )
+                },
+                onDelete = {
+                    val idToDelete = editingId
+
+                    if (idToDelete != null) {
+                        val updatedWorkouts =
+                            currentWorkouts.filterNot {
+                                it.id == idToDelete
+                            }
+
+                        persistWorkouts(
+                            updatedWorkouts = updatedWorkouts,
+                            errorMessage = deleteFailedMessage,
+                            onSuccess = {
+                                if (activeWorkout?.id == idToDelete) {
+                                    selectedWorkoutJson = null
+                                }
+
+                                openLibraryAsRoot()
+                            }
+                        )
+                    }
+                },
+                onDuplicate = { workout ->
+                    val duplicatedWorkout = workout.copy(
+                        id = UUID.randomUUID().toString(),
+                        name = workoutCopyNameFormat.format(
+                            workout.name
+                        )
+                    )
+
+                    persistWorkouts(
+                        updatedWorkouts =
+                            currentWorkouts + duplicatedWorkout,
+                        errorMessage = duplicateFailedMessage,
+                        onSuccess = {
+                            openLibraryAsRoot()
+                        }
+                    )
+                }
+            )
+        }
+
+        composable(AppRoutes.SETTINGS) {
+            SettingsScreen(
+                selectedLanguage = currentAppLanguage(),
+                onLanguageChange = { languageTag ->
+                    changeAppLanguage(languageTag)
+                },
+                soundEnabled = currentSettings.soundEnabled,
+                vibrationEnabled =
+                    currentSettings.vibrationEnabled,
+                onSoundChange = { enabled ->
+                    scope.launch {
+                        try {
+                            saveSoundEnabled(
+                                context = context,
+                                enabled = enabled
+                            )
+                        } catch (error: CancellationException) {
+                            throw error
+                        } catch (_: Exception) {
+                            showError(settingsSaveFailedMessage)
+                        }
+                    }
+                },
+                onVibrationChange = { enabled ->
+                    scope.launch {
+                        try {
+                            saveVibrationEnabled(
+                                context = context,
+                                enabled = enabled
+                            )
+                        } catch (error: CancellationException) {
+                            throw error
+                        } catch (_: Exception) {
+                            showError(settingsSaveFailedMessage)
+                        }
+                    }
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
+}
 
-    BackHandler(enabled = showSettings) {
-        showSettings = false
-    }
-
+@Composable
+private fun TimerLibraryScreen(
+    workouts: List<Workout>,
+    onCreate: () -> Unit,
+    onEdit: (String) -> Unit,
+    onStart: (Workout) -> Unit,
+    onSettings: () -> Unit
+) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets =
-            androidx.compose.foundation.layout.WindowInsets(
-                0, 0, 0, 0
-            ),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             NavigationBar(
-                containerColor =
-                    MaterialTheme.colorScheme.surface
+                containerColor = MaterialTheme.colorScheme.surface
             ) {
                 NavigationBarItem(
-                    selected = !showSettings,
-                    onClick = {
-                        showSettings = false
-                    },
+                    selected = true,
+                    onClick = {},
                     icon = {
-                        Text(text = "▶")
+                        Text(text = "▦")
                     },
                     label = {
                         Text(
-                            text = stringResource(
-                                R.string.tab_timers
-                            )
+                            text = stringResource(R.string.tab_timers)
                         )
                     }
                 )
 
                 NavigationBarItem(
-                    selected = showSettings,
-                    onClick = {
-                        showSettings = true
-                    },
+                    selected = false,
+                    onClick = onSettings,
                     icon = {
                         Text(text = "⚙")
                     },
                     label = {
                         Text(
-                            text = stringResource(
-                                R.string.tab_settings
-                            )
+                            text = stringResource(R.string.tab_settings)
                         )
                     }
                 )
@@ -397,67 +517,16 @@ internal fun TimerApp() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding())
+                .padding(
+                    bottom = innerPadding.calculateBottomPadding()
+                )
         ) {
-            if (showSettings) {
-                SettingsScreen(
-                    selectedLanguage = currentAppLanguage(),
-                    onLanguageChange = { languageTag ->
-                        changeAppLanguage(languageTag)
-                    },
-                    soundEnabled = currentSettings.soundEnabled,
-                    vibrationEnabled =
-                        currentSettings.vibrationEnabled,
-                    onSoundChange = { enabled ->
-                        scope.launch {
-                            try {
-                                saveSoundEnabled(
-                                    context = context,
-                                    enabled = enabled
-                                )
-                            } catch (error: CancellationException) {
-                                throw error
-                            } catch (_: Exception) {
-                                showError(settingsSaveFailedMessage)
-                            }
-                        }
-                    },
-                    onVibrationChange = { enabled ->
-                        scope.launch {
-                            try {
-                                saveVibrationEnabled(
-                                    context = context,
-                                    enabled = enabled
-                                )
-                            } catch (error: CancellationException) {
-                                throw error
-                            } catch (_: Exception) {
-                                showError(settingsSaveFailedMessage)
-                            }
-                        }
-                    },
-                    onBack = {
-                        showSettings = false
-                    }
-                )
-            } else {
-                HomeScreen(
-                    workouts = currentWorkouts,
-                    onCreate = {
-                        editingId = null
-                        isCreating = true
-                    },
-                    onEdit = { workoutId ->
-                        isCreating = false
-                        editingId = workoutId
-                    },
-                    onStart = { workout ->
-                        runningWorkoutJson = encodeWorkouts(
-                            listOf(workout)
-                        )
-                    }
-                )
-            }
+            HomeScreen(
+                workouts = workouts,
+                onCreate = onCreate,
+                onEdit = onEdit,
+                onStart = onStart
+            )
         }
     }
 }
