@@ -289,7 +289,7 @@ internal fun RunWorkoutScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = workout.name,
+                        text = workout.name.uppercase(),
                         color = ink.copy(alpha = 0.75f),
                         style = MaterialTheme.typography.labelLarge,
                         maxLines = 1,
@@ -528,7 +528,7 @@ internal fun RunWorkoutScreen(
                     }
 
                     Text(
-                        text = controlLabel,
+                        text = controlLabel.uppercase(),
                         color = ink,
                         style = MaterialTheme.typography.labelLarge,
                         textAlign = TextAlign.Center
@@ -599,7 +599,7 @@ private fun TimerCounter(
         )
 
         Text(
-            text = label,
+            text = label.uppercase(),
             color = color.copy(alpha = 0.70f),
             style = MaterialTheme.typography.labelMedium,
             textAlign = TextAlign.Center
@@ -619,10 +619,14 @@ private fun TimerConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = title)
+            Text(
+                text = title.uppercase()
+            )
         },
         text = {
-            Text(text = message)
+            Text(
+                text = message.uppercase()
+            )
         },
         confirmButton = {
             TextButton(
@@ -631,14 +635,18 @@ private fun TimerConfirmationDialog(
                     contentColor = MaterialTheme.colorScheme.error
                 )
             ) {
-                Text(text = confirmLabel)
+                Text(
+                    text = confirmLabel.uppercase()
+                )
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text(text = cancelLabel)
+                Text(
+                    text = cancelLabel.uppercase()
+                )
             }
         }
     )

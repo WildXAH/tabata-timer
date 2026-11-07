@@ -121,7 +121,7 @@ internal fun SettingsScreen(
                 Text(
                     text = stringResource(
                         R.string.settings_title
-                    ),
+                    ).uppercase(),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 32.sp,
@@ -188,7 +188,7 @@ internal fun SettingsScreen(
                         Text(
                             text = stringResource(
                                 R.string.settings_language
-                            ),
+                            ).uppercase(),
                             color =
                                 MaterialTheme.colorScheme.onSurface,
                             fontSize = 18.sp,
@@ -202,7 +202,7 @@ internal fun SettingsScreen(
                                     "ru" -> R.string.language_russian
                                     else -> R.string.language_system
                                 }
-                            ),
+                            ).uppercase(),
                             color =
                                 MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp
@@ -262,14 +262,14 @@ private fun SettingsSwitchRow(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = title,
+                    text = title.uppercase(),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
 
                 Text(
-                    text = description,
+                    text = description.uppercase(),
                     color =
                         MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
@@ -338,8 +338,8 @@ private fun LanguagePage(
 
             Text(
                 text = stringResource(
-                    R.string.language_dialog_title
-                ),
+                    R.string.settings_language
+                ).uppercase(),
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
@@ -404,7 +404,7 @@ private fun LanguageOption(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = label,
+                text = label.uppercase(),
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 20.sp,

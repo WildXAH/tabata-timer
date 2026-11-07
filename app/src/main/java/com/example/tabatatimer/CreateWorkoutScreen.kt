@@ -61,7 +61,22 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 
+private val UppercaseNameTransformation =
+    VisualTransformation { original ->
+        val transformed = original.text.map { character ->
+            character.uppercaseChar()
+        }.joinToString("")
+
+        TransformedText(
+            text = AnnotatedString(transformed),
+            offsetMapping = OffsetMapping.Identity
+        )
+    }
 @Composable
 internal fun CreateWorkoutScreen(
     initialWorkout: Workout? = null,
@@ -261,7 +276,7 @@ internal fun CreateWorkoutScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.duplicate_workout
-                                    ),
+                                    ).uppercase(),
                                     style =
                                         MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium
@@ -306,7 +321,7 @@ internal fun CreateWorkoutScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.delete_workout
-                                    ),
+                                    ).uppercase(),
                                     color =
                                         MaterialTheme.colorScheme.error,
                                     style =
@@ -347,10 +362,11 @@ internal fun CreateWorkoutScreen(
                 .padding(bottom = 20.dp),
             label = {
                 Text(
-                    text = stringResource(R.string.workout_name)
+                    text = stringResource(R.string.workout_name).uppercase()
                 )
             },
             textStyle = MaterialTheme.typography.titleLarge,
+            visualTransformation = UppercaseNameTransformation,
             singleLine = true
         )
 
@@ -384,7 +400,7 @@ internal fun CreateWorkoutScreen(
                 )
 
                 Text(
-                    text = stringResource(R.string.main_timer),
+                    text = stringResource(R.string.main_timer).uppercase(),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodyLarge
@@ -437,7 +453,7 @@ internal fun CreateWorkoutScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.halfway_work_signal),
+                    text = stringResource(R.string.halfway_work_signal).uppercase(),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodyLarge
@@ -506,7 +522,7 @@ internal fun CreateWorkoutScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = stringResource(R.string.total_duration),
+                text = stringResource(R.string.total_duration).uppercase(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -541,7 +557,7 @@ internal fun CreateWorkoutScreen(
                         .height(56.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.cancel),
+                        text = stringResource(R.string.cancel).uppercase(),
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
@@ -572,11 +588,11 @@ internal fun CreateWorkoutScreen(
                 Text(
                     text = stringResource(
                         when {
-                            isFirstSetup -> R.string.save_and_continue
-                            initialWorkout == null -> R.string.create_workout_action
-                            else -> R.string.save
+                            isFirstSetup -> R.string.first_timer_title
+                            initialWorkout == null -> R.string.new_workout
+                            else -> R.string.edit_workout
                         }
-                    ),
+                    ).uppercase(),
                     style = MaterialTheme.typography.labelLarge
                 )
             }
@@ -592,7 +608,7 @@ internal fun CreateWorkoutScreen(
                 Text(
                     text = stringResource(
                         R.string.delete_workout_title
-                    )
+                    ).uppercase()
                 )
             },
             text = {
@@ -600,7 +616,7 @@ internal fun CreateWorkoutScreen(
                     text = stringResource(
                         R.string.delete_workout_message,
                         initialWorkout.name
-                    )
+                    ).uppercase()
                 )
             },
             confirmButton = {
@@ -628,7 +644,7 @@ internal fun CreateWorkoutScreen(
                     }
                 ) {
                     Text(
-                        text = stringResource(R.string.cancel)
+                        text = stringResource(R.string.cancel).uppercase()
                     )
                 }
             }
@@ -644,14 +660,14 @@ internal fun CreateWorkoutScreen(
                 Text(
                     text = stringResource(
                         R.string.discard_changes_title
-                    )
+                    ).uppercase()
                 )
             },
             text = {
                 Text(
                     text = stringResource(
                         R.string.discard_changes_message
-                    )
+                    ).uppercase()
                 )
             },
             confirmButton = {
@@ -668,7 +684,7 @@ internal fun CreateWorkoutScreen(
                     Text(
                         text = stringResource(
                             R.string.discard_changes
-                        )
+                        ).uppercase()
                     )
                 }
             },
@@ -681,7 +697,7 @@ internal fun CreateWorkoutScreen(
                     Text(
                         text = stringResource(
                             R.string.keep_editing
-                        )
+                        ).uppercase()
                     )
                 }
             }
@@ -741,7 +757,7 @@ private fun TimeSettingRow(
                 )
 
                 Text(
-                    text = label,
+                    text = label.uppercase(),
                     modifier = Modifier.padding(
                         start = 16.dp,
                         end = 12.dp
@@ -782,6 +798,7 @@ private fun TimeSettingRow(
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     style = TextStyle(
+                        fontFamily = AppFontFamily,
                         fontFeatureSettings = "tnum"
                     )
                 )

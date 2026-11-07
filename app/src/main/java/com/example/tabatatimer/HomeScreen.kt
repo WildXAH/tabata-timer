@@ -69,7 +69,7 @@ internal fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.my_workouts),
+                    text = stringResource(R.string.my_workouts).uppercase(),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 32.sp,
@@ -154,9 +154,10 @@ private fun WorkoutCard(
             ) {
 
                 Text(
-                    text = workout.name,
+                    text = workout.name.uppercase(),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = AppFontFamily,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
