@@ -50,6 +50,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.zIndex
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 
 @Composable
 internal fun RunWorkoutScreen(
@@ -274,9 +276,10 @@ internal fun RunWorkoutScreen(
                         contentColor = ink
                     )
                 ) {
-                    Text(
-                        text = "▦",
-                        fontSize = 28.sp
+                    Icon(
+                        painter = painterResource(R.drawable.ic_workouts),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
 
@@ -318,9 +321,10 @@ internal fun RunWorkoutScreen(
                         contentColor = Color(0xFFF3F5F7)
                     )
                 ) {
-                    Text(
-                        text = "⚙",
-                        fontSize = 24.sp
+                    Icon(
+                        painter = painterResource(R.drawable.ic_settings),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
@@ -410,9 +414,10 @@ internal fun RunWorkoutScreen(
                             Color(0xFFF3F5F7).copy(alpha = 0.35f)
                     )
                 ) {
-                    Text(
-                        text = "↺",
-                        fontSize = 28.sp
+                    Icon(
+                        painter = painterResource(R.drawable.ic_restart),
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp)
                     )
                 }
             }
@@ -501,15 +506,25 @@ internal fun RunWorkoutScreen(
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
-                        Text(
-                            text = when {
-                                isFinished -> "✓"
-                                isRunning -> "Ⅱ"
-                                else -> "▶"
-                            },
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        if (isFinished) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_check),
+                                contentDescription = null,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(
+                                    if (isRunning) {
+                                        R.drawable.ic_pause
+                                    } else {
+                                        R.drawable.ic_play
+                                    }
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
                     }
 
                     Text(

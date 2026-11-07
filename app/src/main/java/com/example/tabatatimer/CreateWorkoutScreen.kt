@@ -59,6 +59,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 
 @Composable
 internal fun CreateWorkoutScreen(
@@ -201,10 +203,11 @@ internal fun CreateWorkoutScreen(
                         contentDescription = backDescription
                     }
             ) {
-                Text(
-                    text = "‹",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 36.sp
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_back),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
@@ -233,11 +236,11 @@ internal fun CreateWorkoutScreen(
                                 contentDescription = moreDescription
                             }
                     ) {
-                        Text(
-                            text = "⋮",
-                            color =
-                                MaterialTheme.colorScheme.onBackground,
-                            fontSize = 28.sp
+                        Icon(
+                            painter = painterResource(R.drawable.ic_more),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
 
@@ -265,14 +268,16 @@ internal fun CreateWorkoutScreen(
                                 )
                             },
                             leadingIcon = {
-                                EditorActionIcon(
-                                    isDelete = false,
-                                    color = if (canSubmit) {
-                                        MaterialTheme.colorScheme
-                                            .onSurface
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_duplicate),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = if (canSubmit) {
+                                        MaterialTheme.colorScheme.onSurface
                                     } else {
-                                        MaterialTheme.colorScheme
-                                            .onSurface.copy(alpha = 0.38f)
+                                        MaterialTheme.colorScheme.onSurface.copy(
+                                            alpha = 0.38f
+                                        )
                                     }
                                 )
                             },
@@ -310,10 +315,11 @@ internal fun CreateWorkoutScreen(
                                 )
                             },
                             leadingIcon = {
-                                EditorActionIcon(
-                                    isDelete = true,
-                                    color =
-                                        MaterialTheme.colorScheme.error
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_delete),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.error
                                 )
                             },
                             contentPadding = PaddingValues(
@@ -359,12 +365,27 @@ internal fun CreateWorkoutScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 12.dp
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_star),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = if (isMainWorkoutSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
+
                 Text(
                     text = stringResource(R.string.main_timer),
+                    modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodyLarge
                 )

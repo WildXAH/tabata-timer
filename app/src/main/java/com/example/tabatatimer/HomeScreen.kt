@@ -26,10 +26,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 
 @Composable
 internal fun HomeScreen(
     workouts: List<Workout>,
+    mainWorkoutId: String?,
     onCreate: () -> Unit,
     onEdit: (String) -> Unit,
     onStart: (Workout) -> Unit
@@ -88,10 +91,10 @@ internal fun HomeScreen(
                             MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text(
-                        text = "+",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Medium
+                    Icon(
+                        painter = painterResource(R.drawable.ic_add),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
@@ -108,6 +111,7 @@ internal fun HomeScreen(
             ) { workout ->
                 WorkoutCard(
                     workout = workout,
+                    isMainWorkout = workout.id == mainWorkoutId,
                     onEdit = {
                         onEdit(workout.id)
                     },
@@ -123,6 +127,7 @@ internal fun HomeScreen(
 @Composable
 private fun WorkoutCard(
     workout: Workout,
+    isMainWorkout: Boolean,
     onEdit: () -> Unit,
     onStart: () -> Unit
 ) {
@@ -147,6 +152,7 @@ private fun WorkoutCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Text(
                     text = workout.name,
                     modifier = Modifier.weight(1f),
@@ -154,6 +160,15 @@ private fun WorkoutCard(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
+
+                if (isMainWorkout) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_star),
+                        contentDescription = stringResource(R.string.main_timer),
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
 
                 FilledIconButton(
                     onClick = onStart,
@@ -170,9 +185,10 @@ private fun WorkoutCard(
                             MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text(
-                        text = "▶",
-                        fontSize = 22.sp
+                    Icon(
+                        painter = painterResource(R.drawable.ic_play),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }

@@ -34,6 +34,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.datastore.preferences.core.edit
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.painterResource
 
 @Composable
 internal fun TimerApp(
@@ -310,6 +313,7 @@ internal fun TimerApp(
             } else {
                 TimerLibraryScreen(
                     workouts = currentWorkouts,
+                    mainWorkoutId = currentSettings.mainWorkoutId,
                     onCreate = {
                         openEditor(
                             workoutId = null,
@@ -347,6 +351,7 @@ internal fun TimerApp(
 
             TimerLibraryScreen(
                 workouts = currentWorkouts,
+                mainWorkoutId = currentSettings.mainWorkoutId,
                 onCreate = {
                     openEditor(
                         workoutId = null,
@@ -555,6 +560,7 @@ internal fun TimerApp(
 @Composable
 private fun TimerLibraryScreen(
     workouts: List<Workout>,
+    mainWorkoutId: String?,
     onCreate: () -> Unit,
     onEdit: (String) -> Unit,
     onStart: (Workout) -> Unit,
@@ -571,7 +577,11 @@ private fun TimerLibraryScreen(
                     selected = true,
                     onClick = {},
                     icon = {
-                        Text(text = "▦")
+                        Icon(
+                            painter = painterResource(R.drawable.ic_workouts),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
                     },
                     label = {
                         Text(
@@ -584,7 +594,11 @@ private fun TimerLibraryScreen(
                     selected = false,
                     onClick = onSettings,
                     icon = {
-                        Text(text = "⚙")
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
                     },
                     label = {
                         Text(
@@ -604,6 +618,7 @@ private fun TimerLibraryScreen(
         ) {
             HomeScreen(
                 workouts = workouts,
+                mainWorkoutId = mainWorkoutId,
                 onCreate = onCreate,
                 onEdit = onEdit,
                 onStart = onStart
