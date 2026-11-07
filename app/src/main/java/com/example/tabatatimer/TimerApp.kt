@@ -37,6 +37,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.res.painterResource
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 
 @Composable
 internal fun TimerApp(
@@ -282,6 +284,18 @@ internal fun TimerApp(
 
     NavHost(
         navController = navController,
+        enterTransition = {
+            EnterTransition.None
+        },
+        exitTransition = {
+            ExitTransition.None
+        },
+        popEnterTransition = {
+            EnterTransition.None
+        },
+        popExitTransition = {
+            ExitTransition.None
+        },
         startDestination = if (
             currentSettings.mainWorkoutId != null &&
             currentWorkouts.any { workout ->

@@ -58,6 +58,21 @@ internal fun SettingsScreen(
         R.string.settings_back
     )
 
+    if (showLanguagePage) {
+        LanguagePage(
+            selectedLanguage = selectedLanguage,
+            onLanguageChange = { language ->
+                showLanguagePage = false
+                onLanguageChange(language)
+            },
+            onBack = {
+                showLanguagePage = false
+            }
+        )
+
+        return
+    }
+
     BackHandler(onBack = onBack)
 
     Box(
@@ -205,19 +220,6 @@ internal fun SettingsScreen(
                     )
                 }
             }
-        }
-
-        if (showLanguagePage) {
-            LanguagePage(
-                selectedLanguage = selectedLanguage,
-                onLanguageChange = { language ->
-                    onLanguageChange(language)
-                    showLanguagePage = false
-                },
-                onBack = {
-                    showLanguagePage = false
-                }
-            )
         }
     }
 }
@@ -383,30 +385,37 @@ private fun LanguageOption(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    Row(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .selectable(
-                selected = selected,
-                role = Role.RadioButton,
-                onClick = onClick
-            )
-            .padding(
-                horizontal = 16.dp,
-                vertical = 14.dp
-            ),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(bottom = 1.dp),
+        color = MaterialTheme.colorScheme.surface
     ) {
-        RadioButton(
-            selected = selected,
-            onClick = null
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .selectable(
+                    selected = selected,
+                    role = Role.RadioButton,
+                    onClick = onClick
+                )
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
 
-        Text(
-            text = label,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp
-        )
+            RadioButton(
+                selected = selected,
+                onClick = null,
+                modifier = Modifier.size(48.dp)
+            )
+        }
     }
 }
