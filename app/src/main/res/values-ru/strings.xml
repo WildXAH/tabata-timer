@@ -1,123 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Главный экран -->
     <string name="brand_title">TABATA TIMER</string>
-    <string name="my_workouts">Мои тренировки</string>
+    <string name="my_workouts">МОИ ТРЕНИРОВКИ</string>
     <string name="classic_tabata">Классическая табата</string>
-    <string name="create_workout">Создать тренировку</string>
-
-    <!-- Навигация -->
-    <string name="tab_timers">Таймеры</string>
-    <string name="tab_settings">Настройки</string>
-
-    <!-- Настройки -->
-    <string name="settings_title">Настройки</string>
-    <string name="settings_back">Назад</string>
-    <string name="settings_sound">Звук</string>
-    <string name="settings_sound_description">Сигналы смены этапов и последних секунд отсчёта.</string>
-    <string name="settings_vibration">Вибрация</string>
-    <string name="settings_vibration_description">Вибросигналы во время тренировки.</string>
-    <string name="settings_save_failed">Не удалось сохранить настройки. Попробуйте ещё раз.</string>
-    <string name="app_data_load_failed">Не удалось загрузить данные. Перезапустите приложение.</string>
-
-    <!-- Язык -->
-    <string name="settings_language">Язык</string>
-    <string name="settings_language_description">Выберите язык приложения.</string>
-    <string name="language_system">Как в системе</string>
-    <string name="language_english">English</string>
-    <string name="language_russian">Русский</string>
-    <string name="language_dialog_title">Язык приложения</string>
-
-    <!-- Редактор -->
-    <string name="new_workout">Новая тренировка</string>
-    <string name="edit_workout">Редактирование</string>
-    <string name="workout_name">Название тренировки</string>
-    <string name="prepare">Подготовка</string>
-    <string name="work">Работа</string>
-    <string name="rest">Отдых</string>
-    <string name="rounds">Раунды</string>
-    <string name="cycles">Круги</string>
-    <string name="cycle_rest">Отдых между кругами</string>
-    <string name="total_duration">Общая длительность</string>
-
-    <!-- Ввод значений -->
-    <string name="duration_title">%1$s: длительность</string>
-    <string name="minutes">Минуты</string>
-    <string name="seconds">Секунды</string>
-    <string name="quick_presets">Быстрый выбор</string>
-    <string name="preset_minutes">%1$d мин</string>
-    <string name="preset_seconds">%1$d с</string>
-    <string name="count">Количество</string>
-    <string name="duration_error">Секунды: от 0 до 59. Общая длительность: от %1$d до 3600 секунд.</string>
-    <string name="count_error">Введите число от 1 до %1$d.</string>
-    <string name="positive_count_error">Введите целое число больше нуля.</string>
-
-    <!-- Действия -->
-    <string name="save">Сохранить</string>
-    <string name="cancel">Отмена</string>
-    <string name="done">Готово</string>
-    <string name="close">Закрыть</string>
-    <string name="start">Старт</string>
-    <string name="pause">Пауза</string>
-    <string name="resume">Продолжить</string>
-
-    <!-- Список тренировок -->
-    <string name="workout_summary">Работа %1$d с · Отдых %2$d с · Раундов: %3$d · Кругов: %4$d</string>
-    <string name="start_workout">Запустить тренировку «%1$s»</string>
-    <string name="loading_workouts">Загрузка тренировок…</string>
-    <string name="load_failed">Не удалось загрузить тренировки. Перезапустите приложение.</string>
-    <string name="save_failed">Не удалось сохранить тренировку. Попробуйте ещё раз.</string>
-
-    <!-- Удаление -->
-    <string name="delete_workout">Удалить</string>
-    <string name="delete_workout_title">Удалить тренировку?</string>
-    <string name="delete_workout_message">Удалить «%1$s»? Это действие нельзя отменить.</string>
-    <string name="delete_workout_failed">Не удалось удалить тренировку. Попробуйте ещё раз.</string>
-
-    <!-- Дублирование -->
-    <string name="duplicate_workout">Копировать</string>
+    <string name="create_workout">СОЗДАТЬ ТРЕНИРОВКУ</string>
+    <string name="tab_timers">ТАЙМЕРЫ</string>
+    <string name="tab_settings">НАСТРОЙКИ</string>
+    <string name="settings_title">НАСТРОЙКИ</string>
+    <string name="settings_back">НАЗАД</string>
+    <string name="settings_sound">ЗВУК</string>
+    <string name="settings_sound_description">СИГНАЛЫ СМЕНЫ ЭТАПОВ И ПОСЛЕДНИХ СЕКУНД ОТСЧЁТА.</string>
+    <string name="settings_vibration">ВИБРАЦИЯ</string>
+    <string name="settings_vibration_description">ВИБРОСИГНАЛЫ ВО ВРЕМЯ ТРЕНИРОВКИ.</string>
+    <string name="settings_save_failed">НЕ УДАЛОСЬ СОХРАНИТЬ НАСТРОЙКИ. ПОПРОБУЙТЕ ЕЩЁ РАЗ.</string>
+    <string name="app_data_load_failed">НЕ УДАЛОСЬ ЗАГРУЗИТЬ ДАННЫЕ. ПЕРЕЗАПУСТИТЕ ПРИЛОЖЕНИЕ.</string>
+    <string name="settings_language">ЯЗЫК</string>
+    <string name="settings_language_description">ВЫБЕРИТЕ ЯЗЫК ПРИЛОЖЕНИЯ.</string>
+    <string name="language_system">КАК В СИСТЕМЕ</string>
+    <string name="language_english">ENGLISH</string>
+    <string name="language_russian">РУССКИЙ</string>
+    <string name="language_dialog_title">ЯЗЫК ПРИЛОЖЕНИЯ</string>
+    <string name="new_workout">НОВАЯ ТРЕНИРОВКА</string>
+    <string name="edit_workout">РЕДАКТИРОВАНИЕ</string>
+    <string name="workout_name">НАЗВАНИЕ ТРЕНИРОВКИ</string>
+    <string name="prepare">ПОДГОТОВКА</string>
+    <string name="work">РАБОТА</string>
+    <string name="rest">ОТДЫХ</string>
+    <string name="rounds">РАУНДЫ</string>
+    <string name="cycles">КРУГИ</string>
+    <string name="cycle_rest">ОТДЫХ МЕЖДУ КРУГАМИ</string>
+    <string name="total_duration">ОБЩАЯ ДЛИТЕЛЬНОСТЬ</string>
+    <string name="duration_title">%1$s: ДЛИТЕЛЬНОСТЬ</string>
+    <string name="minutes">МИНУТЫ</string>
+    <string name="seconds">СЕКУНДЫ</string>
+    <string name="quick_presets">БЫСТРЫЙ ВЫБОР</string>
+    <string name="preset_minutes">%1$d МИН</string>
+    <string name="preset_seconds">%1$d С</string>
+    <string name="count">КОЛИЧЕСТВО</string>
+    <string name="duration_error">СЕКУНДЫ: ОТ 0 ДО 59. ОБЩАЯ ДЛИТЕЛЬНОСТЬ: ОТ %1$d ДО 3600 СЕКУНД.</string>
+    <string name="count_error">ВВЕДИТЕ ЧИСЛО ОТ 1 ДО %1$d.</string>
+    <string name="positive_count_error">ВВЕДИТЕ ЦЕЛОЕ ЧИСЛО БОЛЬШЕ НУЛЯ.</string>
+    <string name="save">СОХРАНИТЬ</string>
+    <string name="cancel">ОТМЕНА</string>
+    <string name="done">ГОТОВО</string>
+    <string name="close">ЗАКРЫТЬ</string>
+    <string name="start">СТАРТ</string>
+    <string name="pause">ПАУЗА</string>
+    <string name="resume">ПРОДОЛЖИТЬ</string>
+    <string name="workout_summary">РАБОТА %1$d С · ОТДЫХ %2$d С · РАУНДОВ: %3$d · КРУГОВ: %4$d</string>
+    <string name="start_workout">ЗАПУСТИТЬ ТРЕНИРОВКУ «%1$s»</string>
+    <string name="loading_workouts">ЗАГРУЗКА ТРЕНИРОВОК…</string>
+    <string name="load_failed">НЕ УДАЛОСЬ ЗАГРУЗИТЬ ТРЕНИРОВКИ. ПЕРЕЗАПУСТИТЕ ПРИЛОЖЕНИЕ.</string>
+    <string name="save_failed">НЕ УДАЛОСЬ СОХРАНИТЬ ТРЕНИРОВКУ. ПОПРОБУЙТЕ ЕЩЁ РАЗ.</string>
+    <string name="delete_workout">УДАЛИТЬ</string>
+    <string name="delete_workout_title">УДАЛИТЬ ТРЕНИРОВКУ?</string>
+    <string name="delete_workout_message">УДАЛИТЬ «%1$s»? ЭТО ДЕЙСТВИЕ НЕЛЬЗЯ ОТМЕНИТЬ.</string>
+    <string name="delete_workout_failed">НЕ УДАЛОСЬ УДАЛИТЬ ТРЕНИРОВКУ. ПОПРОБУЙТЕ ЕЩЁ РАЗ.</string>
+    <string name="duplicate_workout">КОПИРОВАТЬ</string>
     <string name="workout_copy_name">%1$s (копия)</string>
-    <string name="duplicate_workout_failed">Не удалось создать копию. Попробуйте ещё раз.</string>
-
-    <!-- Таймер -->
-    <string name="exit_timer">Выход</string>
-    <string name="workout_finished">Завершено</string>
-    <string name="rounds_left">Раундов осталось</string>
-    <string name="cycles_left">Кругов осталось</string>
-    <string name="reset_workout">Сбросить тренировку</string>
-    <string name="reset_workout_title">Сбросить тренировку?</string>
-    <string name="reset_workout_message">Прогресс будет сброшен. Для нового запуска нажмите «Старт».</string>
-    <string name="reset">Сбросить</string>
-    <string name="end_workout_title">Завершить тренировку?</string>
-    <string name="end_workout_message">Текущий прогресс будет потерян. Сохранённая тренировка не изменится.</string>
-    <string name="continue_workout">Продолжить</string>
-    <string name="end_workout">Завершить</string>
-
-    <!-- Цвета -->
-    <string name="phase_color_title">%1$s: цвет</string>
-    <string name="change_phase_color">Изменить цвет этапа «%1$s»</string>
-    <string name="color_option">Цвет %1$d</string>
-    <string name="color_save_failed">Не удалось сохранить цвет. Попробуйте ещё раз.</string>
-    <string name="colors_unavailable">Цвета пока недоступны. Попробуйте ещё раз.</string>
-
-    <string name="timer_next">Далее: %1$s · %2$s</string>
-    <string name="timer_next_finished">Далее: завершение</string>
-
-    <string name="editor_back">Назад</string>
-    <string name="editor_more">Другие действия</string>
-    <string name="create_workout_action">Создать</string>
-    <string name="discard_changes_title">Выйти без сохранения?</string>
-    <string name="discard_changes_message">Изменения тренировки не сохранены.</string>
-    <string name="keep_editing">Продолжить редактирование</string>
-    <string name="discard_changes">Выйти</string>
-
-    <string name="timer_edit_current">Редактировать текущую тренировку</string>
-    <string name="main_timer">Главный таймер</string>
-
+    <string name="duplicate_workout_failed">НЕ УДАЛОСЬ СОЗДАТЬ КОПИЮ. ПОПРОБУЙТЕ ЕЩЁ РАЗ.</string>
+    <string name="exit_timer">ВЫХОД</string>
+    <string name="workout_finished">ЗАВЕРШЕНО</string>
+    <string name="rounds_left">РАУНДОВ ОСТАЛОСЬ</string>
+    <string name="cycles_left">КРУГОВ ОСТАЛОСЬ</string>
+    <string name="reset_workout">СБРОСИТЬ ТРЕНИРОВКУ</string>
+    <string name="reset_workout_title">СБРОСИТЬ ТРЕНИРОВКУ?</string>
+    <string name="reset_workout_message">ПРОГРЕСС БУДЕТ СБРОШЕН. ДЛЯ НОВОГО ЗАПУСКА НАЖМИТЕ «СТАРТ».</string>
+    <string name="reset">СБРОСИТЬ</string>
+    <string name="end_workout_title">ЗАВЕРШИТЬ ТРЕНИРОВКУ?</string>
+    <string name="end_workout_message">ТЕКУЩИЙ ПРОГРЕСС БУДЕТ ПОТЕРЯН. СОХРАНЁННАЯ ТРЕНИРОВКА НЕ ИЗМЕНИТСЯ.</string>
+    <string name="continue_workout">ПРОДОЛЖИТЬ</string>
+    <string name="end_workout">ЗАВЕРШИТЬ</string>
+    <string name="phase_color_title">%1$s: ЦВЕТ</string>
+    <string name="change_phase_color">ИЗМЕНИТЬ ЦВЕТ ЭТАПА «%1$s»</string>
+    <string name="color_option">ЦВЕТ %1$d</string>
+    <string name="color_save_failed">НЕ УДАЛОСЬ СОХРАНИТЬ ЦВЕТ. ПОПРОБУЙТЕ ЕЩЁ РАЗ.</string>
+    <string name="colors_unavailable">ЦВЕТА ПОКА НЕДОСТУПНЫ. ПОПРОБУЙТЕ ЕЩЁ РАЗ.</string>
+    <string name="timer_next">ДАЛЕЕ: %1$s · %2$s</string>
+    <string name="timer_next_finished">ДАЛЕЕ: ЗАВЕРШЕНИЕ</string>
+    <string name="editor_back">НАЗАД</string>
+    <string name="editor_more">ДРУГИЕ ДЕЙСТВИЯ</string>
+    <string name="create_workout_action">СОЗДАТЬ</string>
+    <string name="discard_changes_title">ВЫЙТИ БЕЗ СОХРАНЕНИЯ?</string>
+    <string name="discard_changes_message">ИЗМЕНЕНИЯ ТРЕНИРОВКИ НЕ СОХРАНЕНЫ.</string>
+    <string name="keep_editing">ПРОДОЛЖИТЬ РЕДАКТИРОВАНИЕ</string>
+    <string name="discard_changes">ВЫЙТИ</string>
+    <string name="timer_edit_current">РЕДАКТИРОВАТЬ ТЕКУЩУЮ ТРЕНИРОВКУ</string>
+    <string name="main_timer">ГЛАВНЫЙ ТАЙМЕР</string>
     <string name="morning_tabata">Утренняя табата</string>
-    <string name="first_timer_title">Настрой первый таймер</string>
-    <string name="save_and_continue">Сохранить и продолжить</string>
-
-    <string name="halfway_work_signal">Сигнал в середине работы</string>
+    <string name="first_timer_title">НАСТРОЙ ПЕРВЫЙ ТАЙМЕР</string>
+    <string name="save_and_continue">СОХРАНИТЬ И ПРОДОЛЖИТЬ</string>
+    <string name="halfway_work_signal">СИГНАЛ В СЕРЕДИНЕ РАБОТЫ</string>
 </resources>

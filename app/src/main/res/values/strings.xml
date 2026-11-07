@@ -1,120 +1,100 @@
 <resources>
-    <string name="app_name">Tabata Timer</string>
+    <string name="app_name">TABATA TIMER</string>
     <string name="brand_title">TABATA TIMER</string>
-    <string name="my_workouts">My Workouts</string>
+    <string name="my_workouts">MY WORKOUTS</string>
     <string name="classic_tabata">Classic Tabata</string>
-    <string name="classic_tabata_summary">Work 20s · Rest 10s · 8 rounds</string>
-    <string name="start_classic_tabata">Start Classic Tabata workout</string>
-    <string name="create_workout">Create workout</string>
-    <string name="new_workout">New Workout</string>
-    <string name="workout_name">Workout name</string>
-    <string name="cancel">Cancel</string>
-
-    <string name="prepare">Prepare</string>
-    <string name="work">Work</string>
-    <string name="rest">Rest</string>
-    <string name="duration_title">%1$s duration</string>
-    <string name="minutes">Minutes</string>
-    <string name="seconds">Seconds</string>
-    <string name="done">Done</string>
+    <string name="classic_tabata_summary">WORK 20S · REST 10S · 8 ROUNDS</string>
+    <string name="start_classic_tabata">START CLASSIC TABATA WORKOUT</string>
+    <string name="create_workout">CREATE WORKOUT</string>
+    <string name="new_workout">NEW WORKOUT</string>
+    <string name="workout_name">WORKOUT NAME</string>
+    <string name="cancel">CANCEL</string>
+    <string name="prepare">PREPARE</string>
+    <string name="work">WORK</string>
+    <string name="rest">REST</string>
+    <string name="duration_title">%1$s DURATION</string>
+    <string name="minutes">MINUTES</string>
+    <string name="seconds">SECONDS</string>
+    <string name="done">DONE</string>
     <string name="duration_format">%1$02d:%2$02d</string>
-    <string name="duration_error">Seconds must be 0–59. Total: %1$d–3600 seconds.</string>
-    <string name="quick_presets">Quick presets</string>
-    <string name="preset_seconds">%1$ds</string>
-
-    <string name="rounds">Rounds</string>
-    <string name="cycles">Cycles</string>
-    <string name="cycle_rest">Cycle rest</string>
-    <string name="count">Count</string>
-    <string name="count_error">Enter a number from 1 to %1$d.</string>
-    <string name="positive_count_error">Enter a whole number greater than 0.</string>
-    <string name="preset_minutes">%1$dm</string>
-
-    <string name="total_duration">Total duration</string>
+    <string name="duration_error">SECONDS MUST BE 0–59. TOTAL: %1$d–3600 SECONDS.</string>
+    <string name="quick_presets">QUICK PRESETS</string>
+    <string name="preset_seconds">%1$dS</string>
+    <string name="rounds">ROUNDS</string>
+    <string name="cycles">CYCLES</string>
+    <string name="cycle_rest">CYCLE REST</string>
+    <string name="count">COUNT</string>
+    <string name="count_error">ENTER A NUMBER FROM 1 TO %1$d.</string>
+    <string name="positive_count_error">ENTER A WHOLE NUMBER GREATER THAN 0.</string>
+    <string name="preset_minutes">%1$dM</string>
+    <string name="total_duration">TOTAL DURATION</string>
     <string name="total_duration_format">%1$02d:%2$02d:%3$02d</string>
-
-    <string name="save">Save</string>
-    <string name="workout_summary">Work %1$ds · Rest %2$ds · %3$d rounds · %4$d cycles</string>
-    <string name="start_workout">Start %1$s</string>
-
-    <string name="save_failed">Could not save the workout. Please try again.</string>
-    <string name="loading_workouts">Loading workouts…</string>
-    <string name="load_failed">Could not load workouts. Please restart the app.</string>
-
-    <string name="edit_workout">Edit Workout</string>
-
-    <string name="start">Start</string>
-    <string name="pause">Pause</string>
-    <string name="resume">Resume</string>
-    <string name="exit_timer">Exit</string>
-    <string name="workout_finished">Finished</string>
-    <string name="round_number">Round %1$d</string>
-    <string name="cycle_number">Cycle %1$d</string>
-
-    <string name="reset_workout">Reset workout</string>
-    <string name="reset_workout_title">Reset workout?</string>
-    <string name="reset_workout_message">Your progress will be reset. The workout will wait for you to press Start.</string>
-    <string name="reset">Reset</string>
-    <string name="rounds_left">Rounds left</string>
-    <string name="cycles_left">Cycles left</string>
-
-    <string name="end_workout_title">End workout?</string>
-    <string name="end_workout_message">Your current progress will be lost. Your saved workout will not be changed.</string>
-    <string name="continue_workout">Continue</string>
-    <string name="end_workout">End workout</string>
-
-    <string name="phase_color_title">%1$s color</string>
-    <string name="change_phase_color">Change %1$s color</string>
-    <string name="color_option">Color %1$d</string>
-    <string name="close">Close</string>
-    <string name="color_save_failed">Could not save the color. Please try again.</string>
-    <string name="colors_unavailable">Colors are not available yet. Please try again.</string>
-
-    <string name="delete_workout">Delete</string>
-    <string name="delete_workout_title">Delete workout?</string>
-    <string name="delete_workout_message">Delete “%1$s”? This cannot be undone.</string>
-    <string name="delete_workout_failed">Could not delete the workout. Please try again.</string>
-
-    <string name="duplicate_workout">Duplicate</string>
+    <string name="save">SAVE</string>
+    <string name="workout_summary">WORK %1$dS · REST %2$dS · %3$d ROUNDS · %4$d CYCLES</string>
+    <string name="start_workout">START %1$s</string>
+    <string name="save_failed">COULD NOT SAVE THE WORKOUT. PLEASE TRY AGAIN.</string>
+    <string name="loading_workouts">LOADING WORKOUTS…</string>
+    <string name="load_failed">COULD NOT LOAD WORKOUTS. PLEASE RESTART THE APP.</string>
+    <string name="edit_workout">EDIT WORKOUT</string>
+    <string name="start">START</string>
+    <string name="pause">PAUSE</string>
+    <string name="resume">RESUME</string>
+    <string name="exit_timer">EXIT</string>
+    <string name="workout_finished">FINISHED</string>
+    <string name="round_number">ROUND %1$d</string>
+    <string name="cycle_number">CYCLE %1$d</string>
+    <string name="reset_workout">RESET WORKOUT</string>
+    <string name="reset_workout_title">RESET WORKOUT?</string>
+    <string name="reset_workout_message">YOUR PROGRESS WILL BE RESET. THE WORKOUT WILL WAIT FOR YOU TO PRESS START.</string>
+    <string name="reset">RESET</string>
+    <string name="rounds_left">ROUNDS LEFT</string>
+    <string name="cycles_left">CYCLES LEFT</string>
+    <string name="end_workout_title">END WORKOUT?</string>
+    <string name="end_workout_message">YOUR CURRENT PROGRESS WILL BE LOST. YOUR SAVED WORKOUT WILL NOT BE CHANGED.</string>
+    <string name="continue_workout">CONTINUE</string>
+    <string name="end_workout">END WORKOUT</string>
+    <string name="phase_color_title">%1$s COLOR</string>
+    <string name="change_phase_color">CHANGE %1$s COLOR</string>
+    <string name="color_option">COLOR %1$d</string>
+    <string name="close">CLOSE</string>
+    <string name="color_save_failed">COULD NOT SAVE THE COLOR. PLEASE TRY AGAIN.</string>
+    <string name="colors_unavailable">COLORS ARE NOT AVAILABLE YET. PLEASE TRY AGAIN.</string>
+    <string name="delete_workout">DELETE</string>
+    <string name="delete_workout_title">DELETE WORKOUT?</string>
+    <string name="delete_workout_message">DELETE “%1$s”? THIS CANNOT BE UNDONE.</string>
+    <string name="delete_workout_failed">COULD NOT DELETE THE WORKOUT. PLEASE TRY AGAIN.</string>
+    <string name="duplicate_workout">DUPLICATE</string>
     <string name="workout_copy_name">%1$s (copy)</string>
-    <string name="duplicate_workout_failed">Could not duplicate the workout. Please try again.</string>
-
-    <string name="settings_title">Settings</string>
-    <string name="settings_back">Back</string>
-    <string name="settings_sound">Sound</string>
-    <string name="settings_sound_description">Signals for phase changes and the final countdown.</string>
-    <string name="settings_vibration">Vibration</string>
-    <string name="settings_vibration_description">Vibration signals during the workout.</string>
-
-    <string name="tab_timers">Timers</string>
-    <string name="tab_settings">Settings</string>
-    <string name="settings_save_failed">Could not save settings. Please try again.</string>
-    <string name="app_data_load_failed">Could not load app data. Please restart the app.</string>
-
-    <string name="settings_language">Language</string>
-    <string name="settings_language_description">Choose the app language.</string>
-    <string name="language_system">System default</string>
-    <string name="language_english">English</string>
-    <string name="language_russian">Русский</string>
-    <string name="language_dialog_title">App language</string>
-
-    <string name="timer_next">Next: %1$s · %2$s</string>
-    <string name="timer_next_finished">Next: Finished</string>
-
-    <string name="editor_back">Back</string>
-    <string name="editor_more">More actions</string>
-    <string name="create_workout_action">Create</string>
-    <string name="discard_changes_title">Discard changes?</string>
-    <string name="discard_changes_message">Your changes have not been saved.</string>
-    <string name="keep_editing">Keep editing</string>
-    <string name="discard_changes">Discard</string>
-
-    <string name="timer_edit_current">Edit current workout</string>
-    <string name="main_timer">Main timer</string>
-
+    <string name="duplicate_workout_failed">COULD NOT DUPLICATE THE WORKOUT. PLEASE TRY AGAIN.</string>
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_back">BACK</string>
+    <string name="settings_sound">SOUND</string>
+    <string name="settings_sound_description">SIGNALS FOR PHASE CHANGES AND THE FINAL COUNTDOWN.</string>
+    <string name="settings_vibration">VIBRATION</string>
+    <string name="settings_vibration_description">VIBRATION SIGNALS DURING THE WORKOUT.</string>
+    <string name="tab_timers">TIMERS</string>
+    <string name="tab_settings">SETTINGS</string>
+    <string name="settings_save_failed">COULD NOT SAVE SETTINGS. PLEASE TRY AGAIN.</string>
+    <string name="app_data_load_failed">COULD NOT LOAD APP DATA. PLEASE RESTART THE APP.</string>
+    <string name="settings_language">LANGUAGE</string>
+    <string name="settings_language_description">CHOOSE THE APP LANGUAGE.</string>
+    <string name="language_system">SYSTEM DEFAULT</string>
+    <string name="language_english">ENGLISH</string>
+    <string name="language_russian">РУССКИЙ</string>
+    <string name="language_dialog_title">APP LANGUAGE</string>
+    <string name="timer_next">NEXT: %1$s · %2$s</string>
+    <string name="timer_next_finished">NEXT: FINISHED</string>
+    <string name="editor_back">BACK</string>
+    <string name="editor_more">MORE ACTIONS</string>
+    <string name="create_workout_action">CREATE</string>
+    <string name="discard_changes_title">DISCARD CHANGES?</string>
+    <string name="discard_changes_message">YOUR CHANGES HAVE NOT BEEN SAVED.</string>
+    <string name="keep_editing">KEEP EDITING</string>
+    <string name="discard_changes">DISCARD</string>
+    <string name="timer_edit_current">EDIT CURRENT WORKOUT</string>
+    <string name="main_timer">MAIN TIMER</string>
     <string name="morning_tabata">Morning Tabata</string>
-    <string name="first_timer_title">Set up your first timer</string>
-    <string name="save_and_continue">Save and continue</string>
-
-    <string name="halfway_work_signal">Signal halfway through work</string>
+    <string name="first_timer_title">SET UP YOUR FIRST TIMER</string>
+    <string name="save_and_continue">SAVE AND CONTINUE</string>
+    <string name="halfway_work_signal">SIGNAL HALFWAY THROUGH WORK</string>
 </resources>
