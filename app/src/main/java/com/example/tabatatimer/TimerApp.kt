@@ -447,23 +447,44 @@ internal fun TimerApp(
                 onDelete = {
                     val idToDelete = editingId
 
-                    if (idToDelete != null) {
-                        val updatedWorkouts =
-                            currentWorkouts.filterNot {
-                                it.id == idToDelete
-                            }
+                    if (idToDelete != null && !isSaving) {
+                        isSaving = true
 
-                        persistWorkouts(
-                            updatedWorkouts = updatedWorkouts,
-                            errorMessage = deleteFailedMessage,
-                            onSuccess = {
+                        scope.launch {
+                            try {
+                                context.workoutDataStore.edit { preferences ->
+                                    val storedWorkouts = preferences[WorkoutsKey]
+                                        ?.let { json -> decodeWorkouts(json) }
+                                        ?: emptyList()
+
+                                    val updatedWorkouts =
+                                        storedWorkouts.filterNot { workout ->
+                                            workout.id == idToDelete
+                                        }
+
+                                    preferences[WorkoutsKey] =
+                                        encodeWorkouts(updatedWorkouts)
+
+                                    if (
+                                        preferences[MainWorkoutIdKey] == idToDelete
+                                    ) {
+                                        preferences.remove(MainWorkoutIdKey)
+                                    }
+                                }
+
                                 if (activeWorkout?.id == idToDelete) {
                                     selectedWorkoutJson = null
                                 }
 
                                 openLibraryAsRoot()
+                            } catch (error: CancellationException) {
+                                throw error
+                            } catch (_: Exception) {
+                                showError(deleteFailedMessage)
+                            } finally {
+                                isSaving = false
                             }
-                        )
+                        }
                     }
                 },
                 onDuplicate = { workout ->
