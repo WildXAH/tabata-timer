@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.UUID
+import androidx.datastore.preferences.core.edit
 
 @Composable
 internal fun TimerApp(
@@ -194,8 +195,6 @@ internal fun TimerApp(
 
     fun openTimer(workout: Workout) {
         selectedWorkoutJson = encodeWorkouts(listOf(workout))
-        editingId = null
-        editorOpenedFromTimer = false
 
         navController.navigate(AppRoutes.TIMER) {
             popUpTo(navController.graph.id) {
@@ -206,8 +205,6 @@ internal fun TimerApp(
     }
 
     fun openLibraryAsRoot() {
-        editingId = null
-        editorOpenedFromTimer = false
 
         navController.navigate(AppRoutes.LIBRARY) {
             popUpTo(navController.graph.id) {
@@ -245,9 +242,6 @@ internal fun TimerApp(
                 openLibraryAsRoot()
             }
         } else {
-            editingId = null
-            editorOpenedFromTimer = false
-
             if (!navController.popBackStack()) {
                 openLibraryAsRoot()
             }
@@ -381,28 +375,9 @@ internal fun TimerApp(
                 initialWorkout = currentWorkouts.firstOrNull {
                     it.id == editingId
                 },
-                isMainWorkout = currentSettings.mainWorkoutId ==
-                        currentWorkouts.firstOrNull {
-                            it.id == editingId
-                        }?.id,
-                onMainWorkoutChange = { workout, isMain ->
-                    scope.launch {
-                        try {
-                            saveMainWorkoutId(
-                                context = context,
-                                workoutId = if (isMain) {
-                                    workout.id
-                                } else {
-                                    null
-                                }
-                            )
-                        } catch (error: CancellationException) {
-                            throw error
-                        } catch (_: Exception) {
-                            showError(settingsSaveFailedMessage)
-                        }
-                    }
-                },
+                isSubmitting = isSaving,
+                isMainWorkout = editingId != null &&
+                        currentSettings.mainWorkoutId == editingId,
                 onCancel = {
                     cancelEditor()
                 },
@@ -411,34 +386,63 @@ internal fun TimerApp(
                         openTimer(workout)
                     }
                 },
-                onSave = { workout ->
-                    val idToEdit = editingId
+                onSave = {},
+                onSaveWithMain = { workout, makeMain ->
+                    if (!isSaving) {
+                        val idToEdit = editingId
 
-                    val savedWorkout = if (idToEdit != null) {
-                        workout.copy(id = idToEdit)
-                    } else {
-                        workout
-                    }
+                        val savedWorkout = if (idToEdit != null) {
+                            workout.copy(id = idToEdit)
+                        } else {
+                            workout
+                        }
 
-                    val updatedWorkouts = if (idToEdit == null) {
-                        currentWorkouts + savedWorkout
-                    } else {
-                        currentWorkouts.map { existing ->
-                            if (existing.id == idToEdit) {
-                                savedWorkout
-                            } else {
-                                existing
+                        isSaving = true
+
+                        scope.launch {
+                            try {
+                                context.workoutDataStore.edit { preferences ->
+                                    val storedWorkouts = preferences[WorkoutsKey]
+                                        ?.let { json -> decodeWorkouts(json) }
+                                        ?: emptyList()
+
+                                    val updatedWorkouts =
+                                        if (idToEdit == null) {
+                                            storedWorkouts + savedWorkout
+                                        } else {
+                                            storedWorkouts.map { existing ->
+                                                if (existing.id == idToEdit) {
+                                                    savedWorkout
+                                                } else {
+                                                    existing
+                                                }
+                                            }
+                                        }
+
+                                    preferences[WorkoutsKey] =
+                                        encodeWorkouts(updatedWorkouts)
+
+                                    if (makeMain) {
+                                        preferences[MainWorkoutIdKey] =
+                                            savedWorkout.id
+                                    } else if (
+                                        preferences[MainWorkoutIdKey] ==
+                                        savedWorkout.id
+                                    ) {
+                                        preferences.remove(MainWorkoutIdKey)
+                                    }
+                                }
+
+                                openTimer(savedWorkout)
+                            } catch (error: CancellationException) {
+                                throw error
+                            } catch (_: Exception) {
+                                showError(saveFailedMessage)
+                            } finally {
+                                isSaving = false
                             }
                         }
                     }
-
-                    persistWorkouts(
-                        updatedWorkouts = updatedWorkouts,
-                        errorMessage = saveFailedMessage,
-                        onSuccess = {
-                            openTimer(savedWorkout)
-                        }
-                    )
                 },
                 onDelete = {
                     val idToDelete = editingId

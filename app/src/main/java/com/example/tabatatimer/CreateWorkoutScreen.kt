@@ -63,8 +63,10 @@ import androidx.compose.material3.Switch
 @Composable
 internal fun CreateWorkoutScreen(
     initialWorkout: Workout? = null,
+    isFirstSetup: Boolean = false,
+    isSubmitting: Boolean = false,
     isMainWorkout: Boolean = false,
-    onMainWorkoutChange: (Workout, Boolean) -> Unit = { _, _ -> },
+    onSaveWithMain: ((Workout, Boolean) -> Unit)? = null,
     onCancel: () -> Unit,
     onSave: (Workout) -> Unit,
     onStart: (Workout) -> Unit,
@@ -120,6 +122,7 @@ internal fun CreateWorkoutScreen(
     }
 
     val hasChanges =
+        isMainWorkoutSelected != isMainWorkout ||
         workoutName != (initialWorkout?.name ?: "") ||
                 prepareSeconds != (initialWorkout?.prepareSeconds ?: 10) ||
                 workSeconds != (initialWorkout?.workSeconds ?: 20) ||
@@ -361,9 +364,9 @@ internal fun CreateWorkoutScreen(
 
                 Switch(
                     checked = isMainWorkoutSelected,
+                    enabled = !isSubmitting,
                     onCheckedChange = { checked ->
                         isMainWorkoutSelected = checked
-                        onMainWorkoutChange(draft, checked)
                     }
                 )
             }
@@ -467,10 +470,32 @@ internal fun CreateWorkoutScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            if (!isFirstSetup) {
+                TextButton(
+                    enabled = !isSubmitting,
+                    onClick = requestBack,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.cancel),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            }
+
             Button(
                 enabled = canSubmit,
                 onClick = {
-                    onSave(draft)
+                    val saveWithMain = onSaveWithMain
+
+                    if (saveWithMain != null) {
+                        saveWithMain(draft, isMainWorkoutSelected)
+                    } else {
+                        onSave(draft)
+                    }
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -493,36 +518,6 @@ internal fun CreateWorkoutScreen(
                     ),
                     style = MaterialTheme.typography.labelLarge
                 )
-            }
-
-            if (initialWorkout != null && !isFirstSetup) {
-                Button(
-                    enabled = canSubmit,
-                    onClick = {
-                        onStart(draft)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(56.dp),
-                    shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =
-                            MaterialTheme.colorScheme.surface,
-                        contentColor =
-                            MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Text(
-                        text = "▶",
-                        modifier = Modifier.padding(end = 8.dp),
-                        fontSize = 14.sp
-                    )
-
-                    Text(
-                        text = stringResource(R.string.start),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
             }
         }
     }
