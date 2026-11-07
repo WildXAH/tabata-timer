@@ -58,10 +58,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.Switch
 
 @Composable
 internal fun CreateWorkoutScreen(
     initialWorkout: Workout? = null,
+    isMainWorkout: Boolean = false,
+    onMainWorkoutChange: (Workout, Boolean) -> Unit = { _, _ -> },
     onCancel: () -> Unit,
     onSave: (Workout) -> Unit,
     onStart: (Workout) -> Unit,
@@ -82,6 +85,10 @@ internal fun CreateWorkoutScreen(
 
     var workoutName by rememberSaveable(initialWorkout) {
         mutableStateOf(initialWorkout?.name ?: "")
+    }
+
+    var isMainWorkoutSelected by rememberSaveable(initialWorkout?.id) {
+        mutableStateOf(isMainWorkout)
     }
 
     var prepareSeconds by rememberSaveable(initialWorkout) {
@@ -122,7 +129,8 @@ internal fun CreateWorkoutScreen(
                 cycleRestSeconds !=
                 (initialWorkout?.cycleRestSeconds ?: 60)
 
-    val canSubmit = workoutName.isNotBlank()
+    val canSubmit =
+        workoutName.isNotBlank() && !isSubmitting
 
     val draft = Workout(
         id = workoutId,
@@ -141,10 +149,12 @@ internal fun CreateWorkoutScreen(
     val moreDescription = stringResource(R.string.editor_more)
 
     val requestBack: () -> Unit = {
-        if (hasChanges) {
-            showDiscardDialog = true
-        } else {
-            onCancel()
+        if (!isSubmitting) {
+            if (hasChanges) {
+                showDiscardDialog = true
+            } else {
+                onCancel()
+            }
         }
     }
 
@@ -190,10 +200,10 @@ internal fun CreateWorkoutScreen(
 
             Text(
                 text = stringResource(
-                    if (initialWorkout == null) {
-                        R.string.new_workout
-                    } else {
-                        R.string.edit_workout
+                    when {
+                        isFirstSetup -> R.string.first_timer_title
+                        initialWorkout == null -> R.string.new_workout
+                        else -> R.string.edit_workout
                     }
                 ),
                 modifier = Modifier.weight(1f),
@@ -201,7 +211,7 @@ internal fun CreateWorkoutScreen(
                 style = MaterialTheme.typography.headlineSmall
             )
 
-            if (initialWorkout != null) {
+            if (initialWorkout != null && !isFirstSetup) {
                 Box {
                     IconButton(
                         onClick = {
@@ -328,6 +338,37 @@ internal fun CreateWorkoutScreen(
             singleLine = true
         )
 
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 20.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surface
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.main_timer),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Switch(
+                    checked = isMainWorkoutSelected,
+                    onCheckedChange = { checked ->
+                        isMainWorkoutSelected = checked
+                        onMainWorkoutChange(draft, checked)
+                    }
+                )
+            }
+        }
+
         TimeSettingRow(
             label = stringResource(R.string.prepare),
             seconds = prepareSeconds,
@@ -444,17 +485,17 @@ internal fun CreateWorkoutScreen(
             ) {
                 Text(
                     text = stringResource(
-                        if (initialWorkout == null) {
-                            R.string.create_workout_action
-                        } else {
-                            R.string.save
+                        when {
+                            isFirstSetup -> R.string.save_and_continue
+                            initialWorkout == null -> R.string.create_workout_action
+                            else -> R.string.save
                         }
                     ),
                     style = MaterialTheme.typography.labelLarge
                 )
             }
 
-            if (initialWorkout != null) {
+            if (initialWorkout != null && !isFirstSetup) {
                 Button(
                     enabled = canSubmit,
                     onClick = {

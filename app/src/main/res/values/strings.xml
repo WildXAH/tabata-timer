@@ -110,5 +110,11 @@
     <string name="discard_changes">Discard</string>
 
     <string name="timer_edit_current">Edit current workout</string>
+    <string name="main_timer">Main timer</string>
+
+    <string name="morning_tabata">Morning Tabata</string>
+    <string name="first_timer_title">Set up your first timer</string>
+    <string name="save_and_continue">Save and continue</string>
+
 
 </resources>

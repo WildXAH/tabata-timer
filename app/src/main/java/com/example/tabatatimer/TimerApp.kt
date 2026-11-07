@@ -1,5 +1,6 @@
 package com.example.tabatatimer
 
+import androidx.compose.runtime.SideEffect
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,10 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Composable
-internal fun TimerApp() {
+internal fun TimerApp(
+    onStartupReady: () -> Unit = {},
+    onCloseApp: () -> Unit = {}
+) {
     val context = LocalContext.current.applicationContext
     val scope = rememberCoroutineScope()
 
@@ -58,9 +62,6 @@ internal fun TimerApp() {
         mutableStateOf(false)
     }
 
-    val defaultWorkoutName =
-        stringResource(R.string.classic_tabata)
-
     val saveFailedMessage =
         stringResource(R.string.save_failed)
 
@@ -76,27 +77,26 @@ internal fun TimerApp() {
     val workoutCopyNameFormat =
         stringResource(R.string.workout_copy_name)
 
-    val workoutsFlow = remember(context, defaultWorkoutName) {
+    val workoutsFlow = remember(context) {
         context.workoutDataStore.data
             .map { preferences ->
                 val json = preferences[WorkoutsKey]
 
-                if (json == null) {
-                    listOf(
-                        Workout(
-                            id = "default-classic-tabata",
-                            name = defaultWorkoutName,
-                            prepareSeconds = 10,
-                            workSeconds = 20,
-                            restSeconds = 10,
-                            rounds = 8,
-                            cycles = 1,
-                            cycleRestSeconds = 60
-                        )
-                    )
-                } else {
+                val savedWorkouts = if (json != null) {
                     decodeWorkouts(json)
+                } else {
+                    emptyList()
                 }
+
+                val setupCompleted =
+                    preferences[InitialSetupCompletedKey]
+                        ?: (json != null)
+
+                StartupWorkouts(
+                    workouts = savedWorkouts,
+                    setupCompleted = setupCompleted,
+                    mainWorkoutId = preferences[MainWorkoutIdKey]
+                )
             }
             .catch { error ->
                 if (error is CancellationException) {
@@ -121,6 +121,18 @@ internal fun TimerApp() {
     val workouts by workoutsFlow.collectAsState(initial = null)
     val appSettings by settingsFlow.collectAsState(initial = null)
 
+    val startupData = workouts
+
+    val startupReady =
+        loadFailed ||
+                (startupData != null && appSettings != null)
+
+    SideEffect {
+        if (startupReady) {
+            onStartupReady()
+        }
+    }
+
     if (loadFailed) {
         Text(
             text = stringResource(R.string.app_data_load_failed),
@@ -133,16 +145,25 @@ internal fun TimerApp() {
         return
     }
 
-    val currentWorkouts = workouts
     val currentSettings = appSettings
 
-    if (currentWorkouts == null || currentSettings == null) {
-        Text(
-            text = stringResource(R.string.loading_workouts),
-            modifier = Modifier
-                .systemBarsPadding()
-                .padding(24.dp),
-            color = MaterialTheme.colorScheme.onBackground
+    if (startupData == null || currentSettings == null) {
+        return
+    }
+
+    val currentWorkouts = startupData.workouts
+
+    if (!startupData.setupCompleted) {
+        FirstRunSetupScreen(
+            context = context,
+            onCancel = onCloseApp,
+            onError = { message ->
+                Toast.makeText(
+                    context,
+                    message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         )
 
         return
@@ -156,8 +177,12 @@ internal fun TimerApp() {
         }
     }
 
+    val mainWorkout = currentWorkouts.firstOrNull {
+        it.id == startupData.mainWorkoutId
+    } ?: currentWorkouts.firstOrNull()
+
     val activeWorkout =
-        selectedWorkout ?: currentWorkouts.firstOrNull()
+        selectedWorkout ?: mainWorkout
 
     fun showError(message: String) {
         Toast.makeText(
@@ -260,7 +285,16 @@ internal fun TimerApp() {
 
     NavHost(
         navController = navController,
-        startDestination = AppRoutes.TIMER
+        startDestination = if (
+            currentSettings.mainWorkoutId != null &&
+            currentWorkouts.any { workout ->
+                workout.id == currentSettings.mainWorkoutId
+            }
+        ) {
+            AppRoutes.TIMER
+        } else {
+            AppRoutes.LIBRARY
+        }
     ) {
         composable(AppRoutes.TIMER) {
             if (activeWorkout != null) {
@@ -346,6 +380,28 @@ internal fun TimerApp() {
             CreateWorkoutScreen(
                 initialWorkout = currentWorkouts.firstOrNull {
                     it.id == editingId
+                },
+                isMainWorkout = currentSettings.mainWorkoutId ==
+                        currentWorkouts.firstOrNull {
+                            it.id == editingId
+                        }?.id,
+                onMainWorkoutChange = { workout, isMain ->
+                    scope.launch {
+                        try {
+                            saveMainWorkoutId(
+                                context = context,
+                                workoutId = if (isMain) {
+                                    workout.id
+                                } else {
+                                    null
+                                }
+                            )
+                        } catch (error: CancellationException) {
+                            throw error
+                        } catch (_: Exception) {
+                            showError(settingsSaveFailedMessage)
+                        }
+                    }
                 },
                 onCancel = {
                     cancelEditor()

@@ -113,4 +113,9 @@
     <string name="discard_changes">Выйти</string>
 
     <string name="timer_edit_current">Редактировать текущую тренировку</string>
+    <string name="main_timer">Главный таймер</string>
+
+    <string name="morning_tabata">Утренняя табата</string>
+    <string name="first_timer_title">Настрой первый таймер</string>
+    <string name="save_and_continue">Сохранить и продолжить</string>
 </resources>
