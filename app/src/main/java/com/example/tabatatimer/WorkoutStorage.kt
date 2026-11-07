@@ -30,6 +30,7 @@ internal fun encodeWorkouts(
                 put("rounds", workout.rounds)
                 put("cycles", workout.cycles)
                 put("cycleRestSeconds", workout.cycleRestSeconds)
+                put("halfwaySignalEnabled", workout.halfwaySignalEnabled)
             }
         )
     }
@@ -61,7 +62,11 @@ internal fun decodeWorkouts(
             restSeconds = item.getInt("restSeconds"),
             rounds = item.getInt("rounds"),
             cycles = item.getInt("cycles"),
-            cycleRestSeconds = item.getInt("cycleRestSeconds")
+            cycleRestSeconds = item.getInt("cycleRestSeconds"),
+            halfwaySignalEnabled = item.optBoolean(
+                "halfwaySignalEnabled",
+                false
+            )
         )
     }
 }

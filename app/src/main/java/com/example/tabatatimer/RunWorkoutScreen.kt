@@ -156,7 +156,9 @@ internal fun RunWorkoutScreen(
         position = position,
         hasStarted = hasStarted,
         isRunning = isRunning,
-        soundEnabled = soundEnabled
+        soundEnabled = soundEnabled,
+        workSeconds = workout.workSeconds,
+        halfwaySignalEnabled = workout.halfwaySignalEnabled
     )
 
     WorkoutVibrationEffects(

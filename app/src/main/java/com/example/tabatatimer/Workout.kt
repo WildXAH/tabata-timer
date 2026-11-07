@@ -10,5 +10,6 @@ data class Workout(
     val rounds: Int,
     val cycles: Int,
     val cycleRestSeconds: Int,
-    val id: String = UUID.randomUUID().toString()
+    val id: String = UUID.randomUUID().toString(),
+    val halfwaySignalEnabled: Boolean = false
 )

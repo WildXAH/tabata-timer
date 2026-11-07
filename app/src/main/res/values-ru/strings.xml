@@ -118,4 +118,6 @@
     <string name="morning_tabata">Утренняя табата</string>
     <string name="first_timer_title">Настрой первый таймер</string>
     <string name="save_and_continue">Сохранить и продолжить</string>
+
+    <string name="halfway_work_signal">Сигнал в середине работы</string>
 </resources>

@@ -93,6 +93,10 @@ internal fun CreateWorkoutScreen(
         mutableStateOf(isMainWorkout)
     }
 
+    var halfwaySignalEnabled by rememberSaveable(initialWorkout?.id) {
+        mutableStateOf(initialWorkout?.halfwaySignalEnabled ?: false)
+    }
+
     var prepareSeconds by rememberSaveable(initialWorkout) {
         mutableIntStateOf(initialWorkout?.prepareSeconds ?: 10)
     }
@@ -122,6 +126,8 @@ internal fun CreateWorkoutScreen(
     }
 
     val hasChanges =
+        halfwaySignalEnabled !=
+                (initialWorkout?.halfwaySignalEnabled ?: false) ||
         isMainWorkoutSelected != isMainWorkout ||
         workoutName != (initialWorkout?.name ?: "") ||
                 prepareSeconds != (initialWorkout?.prepareSeconds ?: 10) ||
@@ -143,7 +149,8 @@ internal fun CreateWorkoutScreen(
         restSeconds = restSeconds,
         rounds = rounds,
         cycles = cycles,
-        cycleRestSeconds = cycleRestSeconds
+        cycleRestSeconds = cycleRestSeconds,
+        halfwaySignalEnabled = halfwaySignalEnabled
     )
 
     val totalSeconds = workoutDurationSeconds(draft)
@@ -391,6 +398,39 @@ internal fun CreateWorkoutScreen(
                 workSeconds = it
             }
         )
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 1.dp),
+            color = MaterialTheme.colorScheme.surface
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 20.dp,
+                        vertical = 12.dp
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.halfway_work_signal),
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Switch(
+                    checked = halfwaySignalEnabled,
+                    enabled = !isSubmitting,
+                    onCheckedChange = { enabled ->
+                        halfwaySignalEnabled = enabled
+                    }
+                )
+            }
+        }
 
         TimeSettingRow(
             label = stringResource(R.string.rest),

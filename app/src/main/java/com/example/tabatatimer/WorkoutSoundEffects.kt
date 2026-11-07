@@ -17,7 +17,9 @@ internal fun WorkoutSoundEffects(
     position: TimerPosition,
     hasStarted: Boolean,
     isRunning: Boolean,
-    soundEnabled: Boolean
+    soundEnabled: Boolean,
+    workSeconds: Int,
+    halfwaySignalEnabled: Boolean
 ) {
     var toneGenerator by remember {
         mutableStateOf<ToneGenerator?>(null)
@@ -28,6 +30,10 @@ internal fun WorkoutSoundEffects(
     }
 
     var lastCountdownKey by rememberSaveable(workoutId) {
+        mutableStateOf<String?>(null)
+    }
+
+    var lastHalfwayKey by rememberSaveable(workoutId) {
         mutableStateOf<String?>(null)
     }
 
@@ -53,6 +59,8 @@ internal fun WorkoutSoundEffects(
         hasStarted,
         isRunning,
         soundEnabled,
+        workSeconds,
+        halfwaySignalEnabled,
         position.phase,
         position.round,
         position.cycle,
@@ -61,6 +69,7 @@ internal fun WorkoutSoundEffects(
         if (!hasStarted) {
             lastPhaseKey = null
             lastCountdownKey = null
+            lastHalfwayKey = null
             return@LaunchedEffect
         }
 
@@ -74,6 +83,12 @@ internal fun WorkoutSoundEffects(
 
         val phaseKey =
             "${position.phase}:${position.round}:${position.cycle}"
+
+        val isHalfwayMoment =
+            halfwaySignalEnabled &&
+                    workSeconds >= 2 &&
+                    position.phase == TimerPhase.WORK &&
+                    position.secondsLeft == workSeconds.toLong() / 2
 
         if (phaseKey != lastPhaseKey) {
             lastPhaseKey = phaseKey
@@ -109,6 +124,17 @@ internal fun WorkoutSoundEffects(
                 }
             }
         } else if (
+            isHalfwayMoment &&
+            lastHalfwayKey != phaseKey
+        ) {
+            lastHalfwayKey = phaseKey
+
+            generator.startTone(
+                ToneGenerator.TONE_PROP_BEEP2,
+                400
+            )
+        } else if (
+            !isHalfwayMoment &&
             position.phase != TimerPhase.FINISHED &&
             position.secondsLeft in 1L..3L
         ) {
